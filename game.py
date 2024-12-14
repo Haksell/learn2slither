@@ -7,6 +7,33 @@ _TILE_PADDING = 0.03
 _COLOR_CORRECT = (232, 138, 69)
 _COLOR_INCORRECT = (106, 198, 184)
 
+PALETTE = [
+    255,
+    102,
+    159,
+    255,
+    159,
+    102,
+    236,
+    255,
+    102,
+    121,
+    255,
+    102,
+    102,
+    255,
+    198,
+    102,
+    198,
+    255,
+    121,
+    102,
+    255,
+    236,
+    102,
+    255,
+]
+
 
 def _make_goal(height, width):
     length = width * height
@@ -103,18 +130,15 @@ class Game(pyglet.window.Window):
     def __make_batch(self):
         batch = pyglet.graphics.Batch()
         visible_tile_size = (1 - 2 * _TILE_PADDING) * self.__tile_size
-        for i, number in enumerate(self.__puzzle):
-            if number == 0:
-                continue
+        for i in range(len(self.__puzzle)):
             y, x = divmod(i, self.__puzzle.width)
+            palette_start = (3 * i) % len(PALETTE)
             pyglet.shapes.Rectangle(
                 x * self.__tile_size + 2 * self.__padding,
                 self.height - (y * self.__tile_size + self.__tile_size),
                 visible_tile_size,
                 visible_tile_size,
-                color=_COLOR_CORRECT
-                if self.__puzzle.is_correct(i)
-                else _COLOR_INCORRECT,
+                color=PALETTE[palette_start : palette_start + 3],
                 batch=batch,
             )
         return batch
@@ -137,7 +161,7 @@ class Game(pyglet.window.Window):
 
 
 def __main():
-    puzzle = Puzzle([1, 2, 3, 4, 5, 6, 7, 8, 0], 3, 3)
+    puzzle = Puzzle(list(range(100)), 10, 10)
     Game(puzzle).run()
 
 
