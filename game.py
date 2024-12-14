@@ -7,6 +7,7 @@ _TILE_PADDING = 0.03
 _BAD_APPLE_COLOR = (255, 96, 96)
 _GOOD_APPLE_COLOR = (96, 255, 96)
 _SNAKE_COLOR = (96, 96, 255)
+_BACKGROUND_COLOR = (50, 50, 50)
 
 
 class Puzzle:
@@ -76,13 +77,12 @@ class Game(pyglet.window.Window):
         visible_tile_size = (1 - 2 * _TILE_PADDING) * self.__tile_size
         for i in range(len(self.__puzzle)):
             y, x = divmod(i, self.__puzzle.width)
-            color = (
-                _SNAKE_COLOR
-                if i % 3 == 0
-                else _GOOD_APPLE_COLOR
-                if i % 3 == 1
-                else _BAD_APPLE_COLOR
-            )
+            color = [
+                _SNAKE_COLOR,
+                _GOOD_APPLE_COLOR,
+                _BAD_APPLE_COLOR,
+                _BACKGROUND_COLOR,
+            ][i % 4]
             pyglet.shapes.Rectangle(
                 x * self.__tile_size + 2 * self.__padding,
                 self.height - (y * self.__tile_size + self.__tile_size),
