@@ -1,60 +1,12 @@
-import itertools
 import pyglet
 
 _MAX_TILE_SIZE = 125
 _MAX_SCREEN_PROPORTION = 0.7
 _TILE_PADDING = 0.03
-_COLOR_CORRECT = (232, 138, 69)
-_COLOR_INCORRECT = (106, 198, 184)
 
-PALETTE = [
-    255,
-    102,
-    159,
-    255,
-    159,
-    102,
-    236,
-    255,
-    102,
-    121,
-    255,
-    102,
-    102,
-    255,
-    198,
-    102,
-    198,
-    255,
-    121,
-    102,
-    255,
-    236,
-    102,
-    255,
-]
-
-
-def _make_goal(height, width):
-    length = width * height
-    tiles = [-1] * length
-    x = y = 0
-    dx = 1
-    dy = 0
-    for cur in itertools.chain(range(1, length), [0]):
-        tiles[x + y * width] = cur
-        cur += 1
-        if (
-            x + dx >= width
-            or x + dx < 0
-            or y + dy >= height
-            or y + dy < 0
-            or tiles[x + dx + (y + dy) * width] != -1
-        ):
-            dx, dy = -dy, dx
-        x += dx
-        y += dy
-    return tiles
+_BAD_APPLE_COLOR = (255, 96, 96)
+_GOOD_APPLE_COLOR = (96, 255, 96)
+_SNAKE_COLOR = (96, 96, 255)
 
 
 class Puzzle:
@@ -62,10 +14,6 @@ class Puzzle:
         self.__height = height
         self.__width = width
         self.__tiles = tiles
-        self.update_goal(goal or _make_goal(height, width))
-        self.minx = self.miny = 0
-        self.maxx = width - 1
-        self.maxy = height - 1
 
     def __len__(self):
         return len(self.__tiles)
@@ -83,10 +31,6 @@ class Puzzle:
             )
             for y in range(self.__height)
         )
-
-    @property
-    def padding(self):
-        return len(str(len(self) - 1))
 
     @property
     def height(self):
@@ -132,13 +76,19 @@ class Game(pyglet.window.Window):
         visible_tile_size = (1 - 2 * _TILE_PADDING) * self.__tile_size
         for i in range(len(self.__puzzle)):
             y, x = divmod(i, self.__puzzle.width)
-            palette_start = (3 * i) % len(PALETTE)
+            color = (
+                _SNAKE_COLOR
+                if i % 3 == 0
+                else _GOOD_APPLE_COLOR
+                if i % 3 == 1
+                else _BAD_APPLE_COLOR
+            )
             pyglet.shapes.Rectangle(
                 x * self.__tile_size + 2 * self.__padding,
                 self.height - (y * self.__tile_size + self.__tile_size),
                 visible_tile_size,
                 visible_tile_size,
-                color=PALETTE[palette_start : palette_start + 3],
+                color=color,
                 batch=batch,
             )
         return batch
